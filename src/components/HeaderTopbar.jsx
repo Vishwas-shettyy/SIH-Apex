@@ -196,7 +196,7 @@ function HeaderTopbar({
   ];
 
   return (
-    <div style={{ position: "sticky", top: 0, zIndex: 1000, padding: "16px 24px 0", pointerEvents: "none" }}>
+    <>
       <style>{`
         @keyframes profileDropdownFadeIn {
           from { opacity: 0; transform: translateY(-6px); }
@@ -214,24 +214,37 @@ function HeaderTopbar({
           to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
-      <header 
+      <header className="header-wrapper"
         style={{ 
-          pointerEvents: "auto",
-          background: isScrolled ? "rgba(255, 255, 255, 0.45)" : "rgba(255, 255, 255, 0.62)",
-          backdropFilter: isScrolled ? "blur(32px) saturate(160%)" : "blur(24px) saturate(150%)", 
-          WebkitBackdropFilter: isScrolled ? "blur(32px) saturate(160%)" : "blur(24px) saturate(150%)",
-          border: isScrolled ? "1px solid rgba(255,255,255,0.5)" : "1px solid rgba(255,255,255,0.65)",
-          boxShadow: isScrolled ? "0 4px 20px rgba(30, 50, 80, 0.05)" : "0 10px 35px rgba(30, 50, 80, 0.08)",
-          borderRadius: "24px",
-          padding: "14px 20px 10px",
-          display: "flex", flexDirection: "column", gap: "16px",
-          transition: "all 0.3s ease",
-          width: "100%", margin: "0 auto",
-          position: "relative"
+          position: "sticky", top: "0px", zIndex: 1000,
+          padding: "12px 24px 0 24px", margin: "0",
+          background: "transparent",
+          backdropFilter: "none", WebkitBackdropFilter: "none",
+          border: "none", boxShadow: "none", outline: "none",
+          mask: "none", WebkitMask: "none", filter: "none",
+          pointerEvents: "none"
         }}
       >
+        <style>{`
+          .header-wrapper::before,
+          .header-wrapper::after {
+            content: none !important;
+          }
+        `}</style>
+        <div className="header-navbar" style={{
+          pointerEvents: "auto",
+          borderRadius: "24px",
+          background: "rgba(245, 247, 250, 0.72)",
+          backdropFilter: "blur(16px) saturate(140%)", 
+          WebkitBackdropFilter: "blur(16px) saturate(140%)",
+          border: "1px solid rgba(148, 163, 184, 0.25)",
+          boxShadow: "0 10px 30px rgba(15, 23, 42, 0.10)",
+          padding: "16px 24px",
+          display: "flex", flexDirection: "column", gap: "16px",
+          transition: "all 0.3s ease",
+        }}>
         {/* Very subtle glass highlight at the top edge */}
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "1px", background: "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0) 100%)", zIndex: 0 }} />
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "1px", background: "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 100%)", zIndex: 0, borderTopLeftRadius: "24px", borderTopRightRadius: "24px" }} />
         
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
           
@@ -450,44 +463,43 @@ function HeaderTopbar({
             )
           })}
         </div>
+
+        {/* ALERT STRIP (Unified inside Header) */}
+        {latestAlert && (
+          <div style={{ 
+            background: "rgba(239, 68, 68, 0.05)", 
+            border: "1px solid rgba(239, 68, 68, 0.2)", 
+            borderRadius: "12px",
+            padding: "8px 16px", 
+            display: "flex", alignItems: "flex-start", gap: "12px",
+            marginTop: "4px"
+          }}>
+            <div style={{ background: "var(--accent-red)", color: "#fff", fontSize: "10px", fontWeight: 700, padding: "3px 6px", borderRadius: "4px", letterSpacing: "1px", flexShrink: 0, marginTop: "2px" }}>
+              {latestAlert.severity?.toUpperCase() || "LIVE ALERT"}
+            </div>
+            {latestAlert.id && !latestAlert.id.startsWith("ALT-SIM-") && (
+              <div style={{ background: "var(--bg-secondary)", border: "1px solid var(--border-color)", color: "var(--text-muted)", fontSize: "10px", fontWeight: 700, padding: "3px 6px", borderRadius: "4px", letterSpacing: "1px", flexShrink: 0, marginTop: "2px" }}>
+                DEMO DATA
+              </div>
+            )}
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "2px" }}>
+              <div style={{ color: "var(--accent-red)", fontSize: "13px", fontWeight: 700 }}>
+                {latestAlert.title}
+                {latestAlert.area && <span style={{ color: "var(--text-secondary)", fontWeight: 600, marginLeft: "8px" }}>— {latestAlert.area}</span>}
+              </div>
+              <div style={{ color: "var(--text-primary)", fontSize: "12px", fontWeight: 500 }}>
+                {latestAlert.message}
+              </div>
+            </div>
+            <div style={{ color: "var(--text-muted)", fontSize: "11px", fontWeight: 600, flexShrink: 0, marginTop: "4px" }}>
+              {latestAlert.time || "Just now"}
+            </div>
+          </div>
+        )}
+        </div>
       </header>
 
-      {/* ALERT STRIP */}
-      {latestAlert && (
-        <div style={{ 
-          background: "rgba(255, 255, 255, 0.9)", 
-          backdropFilter: "blur(12px)",
-          border: "1px solid rgba(239, 68, 68, 0.2)", 
-          borderTop: "none",
-          borderRadius: "0 0 16px 16px",
-          padding: "10px 24px", 
-          display: "flex", alignItems: "flex-start", gap: "16px",
-          margin: "0 20px",
-          boxShadow: "0 4px 15px rgba(239, 68, 68, 0.05)",
-          pointerEvents: "auto"
-        }}>
-          <div style={{ background: "var(--accent-red)", color: "#fff", fontSize: "11px", fontWeight: 700, padding: "4px 8px", borderRadius: "6px", letterSpacing: "1px", flexShrink: 0, marginTop: "2px" }}>
-            {latestAlert.severity?.toUpperCase() || "LIVE ALERT"}
-          </div>
-          {latestAlert.id && !latestAlert.id.startsWith("ALT-SIM-") && (
-            <div style={{ background: "var(--bg-secondary)", border: "1px solid var(--border-color)", color: "var(--text-muted)", fontSize: "11px", fontWeight: 700, padding: "4px 8px", borderRadius: "6px", letterSpacing: "1px", flexShrink: 0, marginTop: "2px" }}>
-              DEMO DATA
-            </div>
-          )}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "2px" }}>
-            <div style={{ color: "var(--accent-red)", fontSize: "14px", fontWeight: 700 }}>
-              {latestAlert.title}
-              {latestAlert.area && <span style={{ color: "var(--text-secondary)", fontWeight: 600, marginLeft: "8px" }}>— {latestAlert.area}</span>}
-            </div>
-            <div style={{ color: "var(--text-primary)", fontSize: "12px", fontWeight: 500 }}>
-              {latestAlert.message}
-            </div>
-          </div>
-          <div style={{ color: "var(--text-muted)", fontSize: "11px", fontWeight: 600, flexShrink: 0, marginTop: "4px" }}>
-            {latestAlert.time || "Just now"}
-          </div>
-        </div>
-      )}
+
 
       {/* OFFICER PROFILE MODAL */}
       <OfficerProfileModal
@@ -560,7 +572,7 @@ function HeaderTopbar({
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 
